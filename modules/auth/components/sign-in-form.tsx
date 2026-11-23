@@ -69,7 +69,11 @@ export function SignInForm() {
               <FieldError errors={[form.formState.errors.password]} />
             </Field>
 
-            <Button type="submit" disabled={form.formState.isSubmitting}>
+            <Button
+              type="submit"
+              className="bg-emerald-600 text-white hover:bg-emerald-700"
+              disabled={form.formState.isSubmitting}
+            >
               {form.formState.isSubmitting ? "Signing in..." : "Sign in"}
             </Button>
 

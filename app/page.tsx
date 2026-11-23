@@ -1,10 +1,14 @@
 import { ModeToggle } from "@/components/ui/mode-toggle";
 import Image from "next/image";
+import { SignOutButton } from "@/modules/auth/components/sign-out-button";
 
 export default function Home() {
   return (
     <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <ModeToggle/>
+      <div className="flex items-center justify-between gap-3 px-4 pt-4">
+        <SignOutButton />
+        <ModeToggle />
+      </div>
       <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
         <Image
           className="dark:invert h-5 w-[100px]"
