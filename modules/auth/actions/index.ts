@@ -33,13 +33,13 @@ function getFieldErrors(error: z.ZodError) {
   return fieldErrors;
 }
 
-export async function getCurrentUser() {
+export async function getCurrentSession() {
   try {
     const session = await auth.api.getSession({
       headers: await headers(),
     });
 
-    return session?.user ?? null;
+    return session ?? null;
   } catch (error) {
     if (
       typeof error === "object" &&
@@ -55,14 +55,24 @@ export async function getCurrentUser() {
   }
 }
 
-export async function requireAuth() {
-  const user = await getCurrentUser();
+export async function getCurrentUser() {
+  const session = await getCurrentSession();
+  return session?.user ?? null;
+}
 
-  if (!user) {
+export async function requireSession() {
+  const session = await getCurrentSession();
+
+  if (!session) {
     redirect("/sign-in");
   }
 
-  return user;
+  return session;
+}
+
+export async function requireAuth() {
+  const session = await requireSession();
+  return session.user;
 }
 
 export async function requireUnauth() {
