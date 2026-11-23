@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import { Geist_Mono, Poppins } from "next/font/google";
 import "./globals.css";
 import { cn } from "@/lib/utils";
-import { Component } from "lucide-react";
 import { ThemeProvider } from "@/components/providers/theme-provider";
 import { ReactQueryProvider } from "@/components/providers/query-provider";
 
@@ -27,6 +26,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
     <html
       lang="en"
       className={cn("h-full", "antialiased", poppins.variable, geistMono.variable, "font-sans")}
+      suppressHydrationWarning
     >
       <body className="min-h-full flex flex-col">
         <ThemeProvider
