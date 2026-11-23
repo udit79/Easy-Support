@@ -1,7 +1,6 @@
 "use client";
 import {useQuery,useMutation,useQueryClient} from "@tanstack/react-query";
 import {getConversations,createConversation,updateConversation,deleteConversation} from "../actions";
-import { string } from "zod";
 export function useConversation(){
     return useQuery(
         {
@@ -10,6 +9,7 @@ export function useConversation(){
         }
     );
 }
+export const useConversations = useConversation;
 export function useCreateConversation(){
     const queryClient=useQueryClient();
     return useMutation(
