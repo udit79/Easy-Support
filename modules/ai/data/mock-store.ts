@@ -57,14 +57,14 @@ const defaultUserData: UserSupportData = {
       amount: 49.99,
       status: "paid",
       dueDate: "2026-07-01",
-      description: "Supportly Pro — July 2026",
+      description: "Easy Support Pro — July 2026",
     },
     {
       id: "INV-1002",
       amount: 49.99,
       status: "pending",
       dueDate: "2026-08-01",
-      description: "Supportly Pro — August 2026",
+      description: "Easy Support Pro — August 2026",
     },
   ],
   orders: [
