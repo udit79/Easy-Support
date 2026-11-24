@@ -5,6 +5,7 @@ import { billingAgent } from "./billing-agent";
 import { shippingAgent } from "./shipping-agent";
 import { technicalAgent } from "./technical-agent";
 import { createInputGuardrail,createOutputGuardrail } from "../guardrails";
+import { escalationTools } from "../tools/escalation-tools";
 export const triageAgent=new Agent<SupportContext>(
     {
         name:"Easy Support Triage Agent",
@@ -25,6 +26,7 @@ If the user asks to speak with a human, agent, or representative:
 4. Do not try to solve the issue further after escalating`),
 model:"gpt-4o-mini",
 handoffs:[billingAgent,shippingAgent,technicalAgent],
+tools:escalationTools,
 inputGuardrails:[createInputGuardrail("triageAgent") as InputGuardrail],
 outputGuardrails:[createOutputGuardrail("triageAgent") as OutputGuardrail]
     }

@@ -3,6 +3,7 @@ import type {SupportContext} from "../context"
 import { withHandoffInstructions } from "../prompts";
 import {billingTools} from "../tools/billing-tools"
 import { createInputGuardrail,createOutputGuardrail } from "../guardrails";
+import { escalationTools } from "../tools/escalation-tools";
 export const billingAgent=new Agent<SupportContext>(
     {
         name:"Easy Support Billing Agent",
@@ -21,7 +22,7 @@ If the user asks to speak with a human, agent, or representative:
 4. Do not try to solve the issue further after escalating
             `),
             model:"gpt-4o-mini",
-            tools:billingTools, 
+            tools:[...billingTools,...escalationTools],
             inputGuardrails:[createInputGuardrail("billingSupportAgent")],
             outputGuardrails:[createOutputGuardrail("billingSupportAgent")]
     }

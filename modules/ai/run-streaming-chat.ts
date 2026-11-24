@@ -41,6 +41,35 @@ async function getConversationMessages(conversationId:string){
         }
     );
 }
+function generateConversationTitle(prompt:string){
+    const normalized=prompt.trim().replace(/\s+/g," ").replace(/[.!?]+$/,"");
+    if(!normalized) return "New chat";
+
+    const shortTitle=normalized
+        .split(" ")
+        .slice(0,8)
+        .join(" ");
+    const title=shortTitle.length>50
+        ? `${shortTitle.slice(0,47).trimEnd()}...`
+        : shortTitle;
+
+    return title.charAt(0).toUpperCase()+title.slice(1);
+}
+async function renameUntitledConversation(conversationId:string,userMessage:string){
+    const conversation=await prisma.conversation.findUnique({
+        where:{id:conversationId},
+        select:{title:true}
+    });
+    if(!conversation) return;
+
+    const isUntitled=["New chat","new_chat","Untitled",""].includes(conversation.title);
+    if(!isUntitled) return;
+
+    await prisma.conversation.update({
+        where:{id:conversationId},
+        data:{title:generateConversationTitle(userMessage)}
+    });
+}
 type chatStreamEvent=|{type:'agent';name:string}|{type:'tool';name:string}|{type:'text';delta:string}
 function encodeEvent(event:chatStreamEvent){
     return new TextEncoder().encode(`${JSON.stringify(event)}\n`)
@@ -70,6 +99,7 @@ function getToolName(item: unknown): string | null {
 }
 export async function runStreamingSupportChat(conversationId:string,userMessage:string,context:SupportContext){
     await saveUserMessage(conversationId,userMessage);
+    await renameUntitledConversation(conversationId,userMessage);
     const messages= await getConversationMessages(conversationId)
     const agentStream=await run(triageAgent,messageToInput(messages),{stream:true,context})
     let assistantReply=""
