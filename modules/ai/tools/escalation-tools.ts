@@ -1,7 +1,7 @@
 import { tool } from "@openai/agents";
 import { z } from "zod";
 import type { SupportContext } from "../context";
-import { createEscalationTicket } from "@/modules/tickets/actions";
+import { createEscalationTicket } from "../tickets/actions";
 
 export const createHumanEscalationTicket = tool<
   z.ZodObject<{

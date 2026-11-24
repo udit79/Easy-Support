@@ -34,8 +34,8 @@ export async function getOpenTicketForConversation(
 export async function getOpenTicketForCurrentConversation(
   conversationId: string,
 ) {
-  const session = await requireAuth();
-  return getOpenTicketForConversation(conversationId, session.user.id);
+  const user = await requireAuth();
+  return getOpenTicketForConversation(conversationId, user.id);
 }
 
 /**

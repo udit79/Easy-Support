@@ -5,7 +5,7 @@ import { searchKnowledgeBase } from "../data/mock-store";
 import {
   getTicketByIdForUser,
   getTicketsForUser,
-} from "@/modules/tickets/actions";
+} from "../tickets/actions";
 
 export const searchKb = tool<
   z.ZodObject<{ query: z.ZodString }>,
