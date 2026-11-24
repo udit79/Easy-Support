@@ -51,13 +51,13 @@ export const AnyNull = runtime.AnyNull
 
 
 export const ModelName = {
-  Test: 'Test',
   User: 'User',
   Session: 'Session',
   Account: 'Account',
   Verification: 'Verification',
   Conversation: 'Conversation',
-  Message: 'Message'
+  Message: 'Message',
+  Ticket: 'Ticket'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -76,22 +76,13 @@ export const TransactionIsolationLevel = runtime.makeStrictEnum({
 export type TransactionIsolationLevel = (typeof TransactionIsolationLevel)[keyof typeof TransactionIsolationLevel]
 
 
-export const TestScalarFieldEnum = {
-  id: 'id',
-  name: 'name',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
-} as const
-
-export type TestScalarFieldEnum = (typeof TestScalarFieldEnum)[keyof typeof TestScalarFieldEnum]
-
-
 export const UserScalarFieldEnum = {
   id: 'id',
   name: 'name',
   email: 'email',
   emailVerified: 'emailVerified',
   image: 'image',
+  role: 'role',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
@@ -159,12 +150,29 @@ export const MessageScalarFieldEnum = {
   id: 'id',
   content: 'content',
   role: 'role',
+  agentName: 'agentName',
+  toolsUsed: 'toolsUsed',
   conversationId: 'conversationId',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
 
 export type MessageScalarFieldEnum = (typeof MessageScalarFieldEnum)[keyof typeof MessageScalarFieldEnum]
+
+
+export const TicketScalarFieldEnum = {
+  id: 'id',
+  title: 'title',
+  description: 'description',
+  priority: 'priority',
+  status: 'status',
+  userId: 'userId',
+  conversationId: 'conversationId',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type TicketScalarFieldEnum = (typeof TicketScalarFieldEnum)[keyof typeof TicketScalarFieldEnum]
 
 
 export const SortOrder = {

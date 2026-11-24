@@ -1,7 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Get a free hosted Postgres database in seconds: `npx create-db`
 
 generator client {
   provider = "prisma-client"
@@ -12,11 +8,9 @@ datasource db {
   provider = "postgresql"
 }
 
-model Test {
-  id        String   @id @default(cuid())
-  name      String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+enum UserRole {
+  USER
+  ADMIN
 }
 
 model User {
@@ -25,11 +19,13 @@ model User {
   email         String
   emailVerified Boolean   @default(false)
   image         String?
+  role          UserRole  @default(USER)
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
   sessions      Session[]
   accounts      Account[]
-  conversation Conversation[]
+  conversations Conversation[]
+  tickets       Ticket[]
 
   @@unique([email])
   @@map("user")
@@ -82,27 +78,69 @@ model Verification {
   @@index([identifier])
   @@map("verification")
 }
-model Conversation{
+
+
+model Conversation {
   id String @id @default(cuid())
   title String
   userId String
-  user User @relation(fields:[userId],references:[id],onDelete:Cascade)
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
   messages Message[]
+  tickets Ticket[]
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
   @@map("conversation")
+
 }
-enum Message_Role{
+
+enum MESSAGE_ROLE {
   USER
   ASSISTANT
 }
-model Message{
+
+enum TicketPriority {
+  LOW
+  MEDIUM
+  HIGH
+  URGENT
+}
+
+enum TicketStatus {
+  OPEN
+  IN_PROGRESS
+  RESOLVED
+}
+
+model Message {
   id String @id @default(cuid())
   content String
-  role Message_Role @default(USER)
+  role MESSAGE_ROLE @default(USER)
+  agentName String?
+  toolsUsed String[] @default([])
   conversationId String
-  conversation Conversation @relation(fields:[conversationId],references:[id],onDelete:Cascade)
+  conversation Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
   @@map("message")
+}
+
+model Ticket {
+  id String @id @default(cuid())
+  title String
+  description String
+  priority TicketPriority @default(MEDIUM)
+  status TicketStatus @default(OPEN)
+  userId String
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  conversationId String
+  conversation Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId])
+  @@index([conversationId, status])
+  @@map("ticket")
 }

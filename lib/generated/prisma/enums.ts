@@ -9,9 +9,36 @@
 * 🟢 You can import this file directly.
 */
 
-export const Message_Role = {
+export const UserRole = {
+  USER: 'USER',
+  ADMIN: 'ADMIN'
+} as const
+
+export type UserRole = (typeof UserRole)[keyof typeof UserRole]
+
+
+export const MESSAGE_ROLE = {
   USER: 'USER',
   ASSISTANT: 'ASSISTANT'
 } as const
 
-export type Message_Role = (typeof Message_Role)[keyof typeof Message_Role]
+export type MESSAGE_ROLE = (typeof MESSAGE_ROLE)[keyof typeof MESSAGE_ROLE]
+
+
+export const TicketPriority = {
+  LOW: 'LOW',
+  MEDIUM: 'MEDIUM',
+  HIGH: 'HIGH',
+  URGENT: 'URGENT'
+} as const
+
+export type TicketPriority = (typeof TicketPriority)[keyof typeof TicketPriority]
+
+
+export const TicketStatus = {
+  OPEN: 'OPEN',
+  IN_PROGRESS: 'IN_PROGRESS',
+  RESOLVED: 'RESOLVED'
+} as const
+
+export type TicketStatus = (typeof TicketStatus)[keyof typeof TicketStatus]
