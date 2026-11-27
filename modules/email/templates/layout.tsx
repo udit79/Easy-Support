@@ -37,7 +37,7 @@ type LayoutProps = {
 export function EmailLayout({
   preview,
   children,
-  logoUrl,
+  logoUrl="https://raw.githubusercontent.com/udit79/Easy-Support/refs/heads/main/public/logo.png",
   appUrl = "https://github.com/udit79/Easy-Support",
 }: LayoutProps) {
   return (
