@@ -21,7 +21,7 @@ export interface ResolvedEmailProps {
   reopenUrl: string;
   /** Optional rating/feedback link. */
   feedbackUrl?: string;
-  logoUrl?: string;
+  bannerUrl?: string;
 }
 
 export default function ResolvedEmail({
@@ -33,36 +33,11 @@ export default function ResolvedEmail({
   ticketUrl,
   reopenUrl,
   feedbackUrl,
-  logoUrl,
 }: ResolvedEmailProps) {
   return (
     <EmailLayout
-      logoUrl={logoUrl}
       preview={`Ticket #${ticketId} is resolved: ${subject}`}
     >
-      <Section
-        style={{
-          margin: "0 0 14px",
-          padding: "4px 10px",
-          backgroundColor: "rgba(92, 225, 255, 0.12)",
-          border: `1px solid ${brand.cyan}`,
-          borderRadius: 999,
-          width: "auto",
-          display: "inline-block",
-        }}
-      >
-        <Text
-          style={{
-            margin: 0,
-            fontSize: 12,
-            fontWeight: 600,
-            color: brand.cyan,
-          }}
-        >
-          Resolved
-        </Text>
-      </Section>
-
       <Text
         style={{
           margin: "0 0 4px",

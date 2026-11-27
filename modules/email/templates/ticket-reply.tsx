@@ -19,7 +19,7 @@ export interface ReplyEmailProps {
   ticketUrl: string;
   /** Optional: the customer's last message, shown as quoted context. */
   customerMessage?: string;
-  logoUrl?: string;
+  bannerUrl?: string;
 }
 
 export default function ReplyEmail({
@@ -30,11 +30,9 @@ export default function ReplyEmail({
   message,
   ticketUrl,
   customerMessage,
-  logoUrl,
 }: ReplyEmailProps) {
   return (
     <EmailLayout
-      logoUrl={logoUrl}
       preview={`${agentName} replied to your ticket: ${subject}`}
     >
       <Text
@@ -107,7 +105,7 @@ ReplyEmail.PreviewProps = {
   customerName: "Aarav",
   ticketId: "ES-1042",
   subject: "Can't reset my password",
-  agentName: "Udit",
+  agentName: "triage",
   message:
     "Thanks for reaching out. I've re-sent the reset link to your email. It expires in 30 minutes.\n\nIf it doesn't arrive, check your spam folder and let me know.",
   customerMessage: "The reset link never arrives in my inbox.",

@@ -29,15 +29,15 @@ const font =
 type LayoutProps = {
   preview: string;
   children: React.ReactNode;
-  /** Absolute URL of a hosted PNG logo (email clients block SVG/data URIs). Optional. */
-  logoUrl?: string;
+  /** Absolute URL of the hosted banner image (PNG/JPG, ~1120px wide). Optional. */
+  bannerUrl?: string;
   appUrl?: string;
 };
 
 export function EmailLayout({
   preview,
   children,
-  logoUrl="https://raw.githubusercontent.com/udit79/Easy-Support/refs/heads/main/public/logo.png",
+  bannerUrl="https://raw.githubusercontent.com/udit79/Easy-Support/refs/heads/main/public/logo.png",
   appUrl = "https://github.com/udit79/Easy-Support",
 }: LayoutProps) {
   return (
@@ -75,45 +75,39 @@ export function EmailLayout({
             overflow: "hidden",
           }}
         >
-          {/* Brand bar: cyan -> orange, same as the logo */}
-          <Section
-            style={{
-              height: 4,
-              lineHeight: "4px",
-              fontSize: 0,
-              backgroundColor: brand.cyan,
-              backgroundImage: `linear-gradient(90deg, ${brand.cyan}, ${brand.blue} 45%, ${brand.orange})`,
-            }}
-          >
-            &nbsp;
-          </Section>
-
-          <Section style={{ padding: "28px 32px 0" }}>
-            {logoUrl ? (
+          {/* Full-width banner at the very top. Falls back to a text wordmark. */}
+          {bannerUrl ? (
+            <Section style={{ padding: 0, lineHeight: 0, fontSize: 0 }}>
               <img
-                src={logoUrl}
-                width={36}
-                height={36}
-                alt="Easy Support"
-                style={{ display: "inline-block", verticalAlign: "middle" }}
+                src={bannerUrl}
+                alt="Easy Support: AI-powered collaborative support"
+                width="560"
+                style={{
+                  display: "block",
+                  width: "100%",
+                  maxWidth: "100%",
+                  height: "auto",
+                  border: 0,
+                }}
               />
-            ) : null}
-            <Text
-              style={{
-                display: "inline-block",
-                verticalAlign: "middle",
-                margin: logoUrl ? "0 0 0 10px" : 0,
-                fontSize: 18,
-                fontWeight: 700,
-                letterSpacing: "-0.01em",
-                color: brand.text,
-              }}
-            >
-              Easy Support
-            </Text>
-          </Section>
+            </Section>
+          ) : (
+            <Section style={{ padding: "28px 32px 0" }}>
+              <Text
+                style={{
+                  margin: 0,
+                  fontSize: 18,
+                  fontWeight: 700,
+                  letterSpacing: "-0.01em",
+                  color: brand.text,
+                }}
+              >
+                Easy Support
+              </Text>
+            </Section>
+          )}
 
-          <Section style={{ padding: "20px 32px 32px" }}>{children}</Section>
+          <Section style={{ padding: "28px 32px 32px" }}>{children}</Section>
 
           <Hr style={{ borderColor: brand.border, margin: 0 }} />
           <Section style={{ padding: "20px 32px 28px" }}>
