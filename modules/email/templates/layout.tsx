@@ -119,8 +119,7 @@ export function EmailLayout({
                 color: brand.muted,
               }}
             >
-              You're getting this because you contacted Easy Support. Reply to
-              this email to add to your ticket.{" "}
+              You're getting this because you contacted {" "}
               <Link href={appUrl} style={{ color: brand.cyan }}>
                 Easy Support
               </Link>
