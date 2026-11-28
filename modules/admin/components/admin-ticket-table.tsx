@@ -11,14 +11,8 @@ import {
   resolveTicket,
   sendHumanReply,
 } from "@/modules/admin/actions";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
 import {
   Table,
   TableBody,
@@ -27,7 +21,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Textarea } from "@/components/ui/textarea";
+import { HumanReplyComposer } from "@/modules/admin/components/human-reply-composer";
 
 export type AdminTicket = {
   id: string;
@@ -51,15 +45,15 @@ export function AdminTicketTable({ tickets }: AdminTicketTableProps) {
   const [selectedTicket, setSelectedTicket] = useState<AdminTicket | null>(
     null,
   );
-  const [reply, setReply] = useState("");
   const [isSaving, setIsSaving] = useState(false);
+  const [notification, setNotification] = useState<string | null>(null);
 
-  async function handleReply() {
-    if (!selectedTicket || !reply.trim()) return;
+  async function handleReply(content: string) {
+    if (!selectedTicket || !content.trim()) return;
 
     setIsSaving(true);
     try {
-      await sendHumanReply(selectedTicket.id, reply);
+      const result = await sendHumanReply(selectedTicket.id, content);
       setRows((current) =>
         current.map((ticket) =>
           ticket.id === selectedTicket.id
@@ -67,16 +61,30 @@ export function AdminTicketTable({ tickets }: AdminTicketTableProps) {
             : ticket,
         ),
       );
+      setNotification(
+        result.emailSent
+          ? null
+          : "Reply saved, but the customer notification email could not be sent. Check the server logs and email configuration.",
+      );
       setSelectedTicket(null);
-      setReply("");
     } finally {
       setIsSaving(false);
     }
   }
 
   async function handleResolve(ticketId: string) {
-    await resolveTicket(ticketId);
-    setRows((current) => current.filter((ticket) => ticket.id !== ticketId));
+    try {
+      const result = await resolveTicket(ticketId);
+      setRows((current) => current.filter((ticket) => ticket.id !== ticketId));
+      setNotification(
+        result.emailSent
+          ? null
+          : "Ticket resolved, but the customer notification email could not be sent. Check the server logs and email configuration.",
+      );
+    } catch (error) {
+      console.error("Failed to resolve support ticket:", error);
+      setNotification("Could not resolve the ticket. Please try again.");
+    }
   }
 
   const columns = useMemo(
@@ -150,6 +158,11 @@ export function AdminTicketTable({ tickets }: AdminTicketTableProps) {
 
   return (
     <>
+      {notification ? (
+        <Alert variant="destructive" className="mb-4">
+          <AlertDescription>{notification}</AlertDescription>
+        </Alert>
+      ) : null}
       <Table>
         <TableHeader>
           {table.getHeaderGroups().map((headerGroup) => (
@@ -189,29 +202,15 @@ export function AdminTicketTable({ tickets }: AdminTicketTableProps) {
         </TableBody>
       </Table>
 
-      <Dialog
-        open={!!selectedTicket}
-        onOpenChange={(open) => !open && setSelectedTicket(null)}
-      >
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Reply as human support</DialogTitle>
-          </DialogHeader>
-          <Textarea
-            value={reply}
-            onChange={(event) => setReply(event.target.value)}
-            placeholder="Write your reply to the customer..."
-          />
-          <DialogFooter>
-            <Button
-              onClick={handleReply}
-              disabled={isSaving || !reply.trim()}
-            >
-              Send reply
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+      {selectedTicket ? (
+        <HumanReplyComposer
+          key={selectedTicket.id}
+          ticketTitle={selectedTicket.title}
+          isSaving={isSaving}
+          onClose={() => setSelectedTicket(null)}
+          onSend={handleReply}
+        />
+      ) : null}
     </>
   );
 }

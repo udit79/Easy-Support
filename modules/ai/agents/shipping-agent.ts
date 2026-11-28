@@ -3,7 +3,7 @@ import { withHandoffInstructions } from "../prompts";
 import type { SupportContext } from "../context";
 import {shippingTools} from "../tools/shipping-tools"
 import { createInputGuardrail,createOutputGuardrail } from "../guardrails";
-import { escalationTools } from "../tools/escalation-tools";
+import { createHumanEscalationTool } from "../tools/escalation-tools";
 export const shippingAgent=new Agent<SupportContext>(
     {
         name:"Easy Support Shipping Agent",
@@ -22,7 +22,7 @@ If the user asks to speak with a human, agent, or representative:
 4. Do not try to solve the issue further after escalating
             `),
             model:"gpt-4o-min",
-            tools:[...shippingTools,...escalationTools],
+            tools:[...shippingTools,createHumanEscalationTool("Easy Support Shipping Agent")],
             inputGuardrails:[createInputGuardrail("ShippingSupportAgent")],
             outputGuardrails:[createOutputGuardrail("ShippingSupportAgent")]
     }

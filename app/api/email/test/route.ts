@@ -1,11 +1,17 @@
 import { NextResponse } from "next/server";
-import { sendReplyEmail, sendResolvedEmail } from "@/modules/email/service";
+import {
+  sendReplyEmail,
+  sendResolvedEmail,
+  sendTicketCreatedEmail,
+} from "@/modules/email/service";
+import TicketCreatedEmail from "@/modules/email/templates/ticket-created";
 import ReplyEmail from "@/modules/email/templates/ticket-reply";
 import ResolvedEmail from "@/modules/email/templates/ticket-resolved";
 
 // Dev-only test endpoint. Delete this file before deploying.
 // Try: http://localhost:3000/api/email/test?template=reply
 //      http://localhost:3000/api/email/test?template=resolved&to=you@gmail.com
+//      http://localhost:3000/api/email/test?template=created&to=you@gmail.com
 export async function GET(req: Request) {
   if (process.env.NODE_ENV === "production") {
     return new NextResponse("Not found", { status: 404 });
@@ -23,9 +29,10 @@ export async function GET(req: Request) {
   }
 
   try {
-    const data =
-      template === "resolved"
-        ? await sendResolvedEmail({ to, ...ResolvedEmail.PreviewProps })
+    const data = template === "resolved"
+      ? await sendResolvedEmail({ to, ...ResolvedEmail.PreviewProps })
+      : template === "created"
+        ? await sendTicketCreatedEmail({ to, ...TicketCreatedEmail.PreviewProps })
         : await sendReplyEmail({ to, ...ReplyEmail.PreviewProps });
 
     return NextResponse.json({ ok: true, template, to, id: data?.id });

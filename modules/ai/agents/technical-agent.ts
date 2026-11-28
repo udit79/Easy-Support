@@ -3,7 +3,7 @@ import type { SupportContext } from "../context";
 import { withHandoffInstructions } from "../prompts";
 import { technicalTools } from "../tools/technical-tools";
 import { createInputGuardrail,createOutputGuardrail } from "../guardrails";
-import { escalationTools } from "../tools/escalation-tools";
+import { createHumanEscalationTool } from "../tools/escalation-tools";
 export const technicalAgent=new Agent<SupportContext>(
     {
         name:"Easy Support Technical Agent",
@@ -22,7 +22,7 @@ If the user asks to speak with a human, agent, or representative:
 4. Do not try to solve the issue further after escalating
             `),
             model:"gpt-4o-mini",
-            tools:[...technicalTools,...escalationTools],
+            tools:[...technicalTools,createHumanEscalationTool("Easy Support Technical Agent")],
             inputGuardrails:[createInputGuardrail("technicalSupportAgent")],
             outputGuardrails:[createOutputGuardrail("technicalSupportAgent")]
     }

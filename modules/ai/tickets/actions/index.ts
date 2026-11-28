@@ -2,6 +2,7 @@
 
 import prisma from "@/lib/db";
 import type { TicketPriority } from "@/lib/generated/prisma/client";
+import { getSupportUrl, sendTicketCreatedEmail } from "@/modules/email/service";
 import { requireAuth } from "@/modules/auth/actions";
 
 type CreateEscalationTicketInput = {
@@ -10,6 +11,7 @@ type CreateEscalationTicketInput = {
   title: string;
   description: string;
   priority: TicketPriority;
+  createdByAgent: string;
 };
 
 /**
@@ -48,6 +50,7 @@ export async function createEscalationTicket({
   title,
   description,
   priority,
+  createdByAgent,
 }: CreateEscalationTicketInput) {
   const existing = await getOpenTicketForConversation(conversationId, userId);
 
@@ -68,12 +71,38 @@ export async function createEscalationTicket({
       priority,
       status: "OPEN",
     },
+    include: {
+      user: { select: { name: true, email: true } },
+    },
   });
+
+  let emailSent = false;
+  try {
+    await sendTicketCreatedEmail({
+      to: ticket.user.email,
+      customerName: ticket.user.name,
+      ticketId: ticket.id,
+      subject: ticket.title,
+      description: ticket.description,
+      priority: ticket.priority,
+      createdByAgent,
+      ticketUrl: getSupportUrl(),
+    });
+    emailSent = true;
+  } catch (error) {
+    console.error(
+      `Failed to send ticket-created notification for ticket ${ticket.id}:`,
+      error,
+    );
+  }
 
   return {
     ticket,
     created: true,
-    message: `Human escalation ticket created. Reference: ${ticket.id}. Priority: ${ticket.priority}. A human agent will follow up soon.`,
+    emailSent,
+    message: emailSent
+      ? `Human escalation ticket created. Reference: ${ticket.id}. Priority: ${ticket.priority}. A confirmation email was sent.`
+      : `Human escalation ticket created. Reference: ${ticket.id}. Priority: ${ticket.priority}. The confirmation email could not be sent.`,
   };
 }
 

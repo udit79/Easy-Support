@@ -12,7 +12,11 @@ import { Input } from "@/components/ui/input";
 import { signInAction } from "@/modules/auth/actions";
 import { signInSchema, type SignInInput } from "@/modules/auth/schemas";
 
-export function SignInForm() {
+export function SignInForm({
+  verificationStatus,
+}: {
+  verificationStatus?: "verified" | "error";
+}) {
   const form = useForm<SignInInput>({
     resolver: zodResolver(signInSchema),
     defaultValues: {
@@ -44,6 +48,23 @@ export function SignInForm() {
         <CardDescription>Sign in to your account.</CardDescription>
       </CardHeader>
       <CardContent>
+        {verificationStatus === "verified" && (
+          <Alert className="mb-4">
+            <AlertDescription>
+              Your email is verified. You can now sign in.
+            </AlertDescription>
+          </Alert>
+        )}
+
+        {verificationStatus === "error" && (
+          <Alert variant="destructive" className="mb-4">
+            <AlertDescription>
+              This verification link is invalid or expired. Please sign in or
+              contact support for help.
+            </AlertDescription>
+          </Alert>
+        )}
+
         {form.formState.errors.root?.message && (
           <Alert variant="destructive" className="mb-4">
             <AlertDescription>{form.formState.errors.root.message}</AlertDescription>
@@ -68,6 +89,15 @@ export function SignInForm() {
               />
               <FieldError errors={[form.formState.errors.password]} />
             </Field>
+
+            <div className="-mt-2 text-right text-sm">
+              <Link
+                href="/forgot-password"
+                className="text-primary underline-offset-4 hover:underline"
+              >
+                Forgot password?
+              </Link>
+            </div>
 
             <Button
               type="submit"

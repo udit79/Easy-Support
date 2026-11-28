@@ -47,7 +47,7 @@ export default function ReplyEmail({
         {agentName} replied to your ticket
       </Text>
       <Text style={{ margin: "0 0 20px", fontSize: 14, color: brand.muted }}>
-        {customerName ? `Hi ${customerName}, ` : ""}here's the latest on your
+        {        customerName ? `Hi ${customerName}, ` : ""}here&apos;s the latest on your
         request.
       </Text>
 
@@ -94,8 +94,8 @@ export default function ReplyEmail({
       </Button>
 
       <Text style={{ margin: "20px 0 0", fontSize: 13, color: brand.muted }}>
-        Need to add something? Reply to this email and it will be added to
-        ticket #{ticketId}.
+        Need to add something? Open the support conversation and reply there.
+        Include ticket #{ticketId} if you contact support another way.
       </Text>
     </EmailLayout>
   );

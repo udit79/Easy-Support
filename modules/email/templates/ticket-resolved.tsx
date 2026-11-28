@@ -17,8 +17,8 @@ export interface ResolvedEmailProps {
   resolutionSummary?: string;
   /** Link to the ticket in the app. */
   ticketUrl: string;
-  /** Link that reopens the ticket (e.g. /tickets/:id/reopen?token=...). */
-  reopenUrl: string;
+  /** Optional link that reopens the ticket. */
+  reopenUrl?: string;
   /** Optional rating/feedback link. */
   feedbackUrl?: string;
   bannerUrl?: string;
@@ -85,10 +85,16 @@ export default function ResolvedEmail({
           color: brand.muted,
         }}
       >
-        Still having the problem?{" "}
-        <Link href={reopenUrl} style={{ color: brand.cyan }}>
-          Reopen this ticket
-        </Link>
+        {reopenUrl ? (
+          <>
+            Still having the problem?{" "}
+            <Link href={reopenUrl} style={{ color: brand.cyan }}>
+              Reopen this ticket
+            </Link>
+          </>
+        ) : (
+          <>Still having the problem? Open support to start a new conversation.</>
+        )}
         {feedbackUrl ? (
           <>
             {" "}

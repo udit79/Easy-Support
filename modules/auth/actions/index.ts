@@ -8,6 +8,10 @@ import { auth } from "@/lib/auth";
 import {
   signInSchema,
   signUpSchema,
+  forgotPasswordSchema,
+  resetPasswordSchema,
+  type ForgotPasswordInput,
+  type ResetPasswordInput,
   type SignInInput,
   type SignUpInput,
 } from "@/modules/auth/schemas";
@@ -130,7 +134,7 @@ export async function signUpAction(input: SignUpInput): Promise<ActionResult> {
         name: result.data.name,
         email: result.data.email,
         password: result.data.password,
-        callbackURL: "/",
+        callbackURL: "/sign-in?verified=1",
       },
       headers: await headers(),
     });
@@ -141,7 +145,77 @@ export async function signUpAction(input: SignUpInput): Promise<ActionResult> {
     };
   }
 
-  redirect("/");
+  return { success: true };
+}
+
+export async function forgotPasswordAction(
+  input: ForgotPasswordInput,
+): Promise<ActionResult> {
+  const result = forgotPasswordSchema.safeParse(input);
+
+  if (!result.success) {
+    return {
+      success: false,
+      fieldErrors: getFieldErrors(result.error),
+    };
+  }
+
+  try {
+    const response = await auth.api.requestPasswordReset({
+      body: {
+        email: result.data.email,
+        redirectTo: "/reset-password",
+      },
+      headers: await headers(),
+    });
+
+    if (!response.status) {
+      return {
+        success: false,
+        error: "Unable to request a reset link. Please try again.",
+      };
+    }
+
+    return { success: true };
+  } catch (error) {
+    console.error("Password reset request failed:", error);
+    return {
+      success: false,
+      error: "Unable to request a reset link. Please try again.",
+    };
+  }
+}
+
+export async function resetPasswordAction(
+  input: ResetPasswordInput,
+): Promise<ActionResult> {
+  const result = resetPasswordSchema.safeParse(input);
+
+  if (!result.success) {
+    return {
+      success: false,
+      fieldErrors: getFieldErrors(result.error),
+    };
+  }
+
+  try {
+    await auth.api.resetPassword({
+      body: {
+        token: result.data.token,
+        newPassword: result.data.newPassword,
+      },
+      headers: await headers(),
+    });
+
+    return { success: true };
+  } catch (error) {
+    console.error("Password reset failed:", error);
+    return {
+      success: false,
+      error:
+        "Unable to reset your password. The link may be invalid or expired; request a new one.",
+    };
+  }
 }
 
 export async function signOutAction(): Promise<never> {
